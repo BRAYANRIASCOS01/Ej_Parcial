@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Teclas Presionadas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Registro de Teclas Presionadas</h1>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID Movimiento</th>
+                <th>Hora y Fecha</th>
+                <th>Tecla Presionada</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td id="fecha1">2023-11-15 10:30:45</td>
+                <td>Enter</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td id="fecha2">2023-11-15 10:31:02</td>
+                <td>Space</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td id="fecha3">2023-11-15 10:31:15</td>
+                <td>Tab</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        // Función para actualizar la fecha y hora actual
+        function actualizarFechaHora() {
+            const ahora = new Date();
+            const fechaHora = ahora.toISOString().replace('T', ' ').substring(0, 19);
+            
+            // Actualizar las celdas de fecha (esto es solo un ejemplo)
+            document.getElementById('fecha1').textContent = fechaHora;
+        }
+        
+        // Llamar a la función inicialmente y cada segundo (opcional)
+        actualizarFechaHora();
+        setInterval(actualizarFechaHora, 1000);
+        
+        // Capturar teclas presionadas (ejemplo básico)
+        document.addEventListener('keydown', function(event) {
+            console.log('Tecla presionada:', event.key);
+            // Aquí podrías agregar lógica para registrar las teclas en la tabla
+        });
+    </script>
+</body>
+</html>
