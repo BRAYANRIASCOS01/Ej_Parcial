@@ -1,59 +1,52 @@
-// Variables globales
-const MAX_REGISTROS = 20;
-let registros = [];
-let contador = 1;
-const tabla = document.querySelector('#movimientos tbody');
+const API_URL = '/api/registros';
 
-// Mapeo de teclas a símbolos
-const TECLAS_FELCHA = {
-    'ArrowUp': '↑ Flecha Arriba',
-    'ArrowDown': '↓ Flecha Abajo', 
-    'ArrowLeft': '← Flecha Izquierda',
-    'ArrowRight': '→ Flecha Derecha'
-};
-
-// Función para agregar nuevo registro
-function agregarRegistro(tecla) {
-    // Crear objeto de registro
-    const registro = {
-        id: contador++,
-        fecha: new Date().toLocaleTimeString(),
-        tecla: tecla
-    };
-
-    // Manejar límite de 20 registros
-    if (registros.length >= MAX_REGISTROS) {
-        registros = []; // Vaciar array
-        contador = 1;   // Reiniciar contador
-        tabla.innerHTML = ''; // Limpiar tabla
-    }
-
-    registros.push(registro); // Agregar al array
-    actualizarTabla();       // Reflejar cambios en la tabla
+// Cargar registros al iniciar
+async function cargarRegistros() {
+  try {
+    const response = await fetch(API_URL);
+    const data = await response.json();
+    actualizarTabla(data);
+  } catch (error) {
+    console.error("Error al cargar:", error);
+  }
 }
 
-// Función para actualizar la tabla visual
-function actualizarTabla() {
-    // Limpiar tabla
-    tabla.innerHTML = '';
-    
-    // Mostrar registros en orden inverso (más reciente primero)
-    registros.slice().reverse().forEach(registro => {
-        const fila = document.createElement('tr');
-        
-        fila.innerHTML = `
-            <td>${registro.id}</td>
-            <td>${registro.fecha}</td>
-            <td>${registro.tecla}</td>
-        `;
-        
-        tabla.appendChild(fila);
+// Guardar nuevo registro
+async function guardarRegistro(tecla) {
+  try {
+    await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tecla })
     });
+    await cargarRegistros(); // Actualizar tabla después de guardar
+  } catch (error) {
+    console.error("Error al guardar:", error);
+  }
 }
 
-// Event listener para teclas
-document.addEventListener('keydown', (event) => {
-    if (TECLAS_FELCHA[event.key]) {
-        agregarRegistro(TECLAS_FELCHA[event.key]);
-    }
+// Detectar flechas
+document.addEventListener('keydown', (e) => {
+  const flechas = {
+    'ArrowUp': '↑ Arriba',
+    'ArrowDown': '↓ Abajo',
+    'ArrowLeft': '← Izquierda',
+    'ArrowRight': '→ Derecha'
+  };
+  if (flechas[e.key]) guardarRegistro(flechas[e.key]);
 });
+
+// Mostrar registros
+function actualizarTabla(registros) {
+  const tbody = document.querySelector('#movimientos tbody');
+  tbody.innerHTML = registros.map(registro => `
+    <tr>
+      <td>${registro.id}</td>
+      <td>${registro.fecha}</td>
+      <td>${registro.tecla}</td>
+    </tr>
+  `).join('');
+}
+
+// Iniciar
+cargarRegistros();
